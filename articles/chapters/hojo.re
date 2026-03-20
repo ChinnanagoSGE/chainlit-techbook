@@ -25,7 +25,7 @@ Chainlitの標準チャットUIは、ユーザーが1つのメッセージを送
 
 === サンプルコードについて
 
-本章のソースコードは、サポートページ@<fn>{support}の@<code>{ch09-game}ディレクトリから参照できます。
+本章のサンプルコードは、サポートページ@<fn>{support}の@<code>{ch09-game}ディレクトリから参照できます。
 //footnote[support][@<href>{https://github.com/statditto/chainlit-techbook-support}]
 
 
@@ -66,7 +66,7 @@ Chainlitの標準チャットUIは、ユーザーが1つのメッセージを送
 ゲームの生成・実行とUIの実装にあたり、大まかに3つのコンポーネントを作ります。
 このアプリの核心は、ChainlitがチャットUIとゲーム画面を繋ぐハブとして機能している点です。
 
-//image[hojo-2][データの流れ：チャット → LLM → send_window_message → フロントエンド]{
+//image[hojo-2][データの流れ：チャット → LLM → send_window_message → フロントエンド][scale=0.95]{
 //}
 
 基本的なデータの流れは以下の通りです。
@@ -346,7 +346,7 @@ chainlit-app/
     └── index.html  # ゲーム画面本体
 //}
 
-//image[hojo-3][リダイレクトの仕組み：ルートURLにアクセスしたらゲーム画面へ飛ばす][scale=0.6]{
+//image[hojo-3][ルートURLからゲーム画面へのリダイレクトの仕組み][scale=0.55]{
 //}
 
 これにより、@<code>{chainlit run app.py}で起動するだけで、ブラウザにChainlitのチャット＋ゲーム画面を表示させることができるようになりました。
@@ -356,7 +356,7 @@ chainlit-app/
 
 CSS Gridで画面を左右に分割し、左側に@<code>{iframe}でChainlitの標準チャットUIを表示、右側にゲームキャンバスを表示しています。
 
-//image[hojo-4][2カラムレイアウト：左にチャット、右にゲームキャンバス]{
+//image[hojo-4][2カラムレイアウト：左にチャット、右にゲームキャンバス][scale=0.9]{
 //}
 
 //emlist[2カラムレイアウト（HTML・CSS抜粋）]{
