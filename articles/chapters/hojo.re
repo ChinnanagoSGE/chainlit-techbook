@@ -134,7 +134,7 @@ LLMへのステージの生成依頼は、プロンプトエンジニアリン�
 
 ここでは、Chainlitのバックエンドのコードを紹介します。
 
-//emlist[Chainlitバックエンド（app.py）]{
+//emlist[Chainlitバックエンド（app.py）][python]{
 import chainlit as cl
 from llm import generate_stage
 
@@ -170,7 +170,7 @@ async def on_message(message: cl.Message) -> None:
 @<code>{cl.send_window_message}は、Chainlitバックエンドからブラウザの@<code>{window}オブジェクトに任意のデータを送信するAPIで、任意のJSON変換可能なデータを送ることができます。
 今回の実装では、LLMが生成したステージJSON（物体の位置・サイズ・物理パラメータなど数十項目）をまるごと送信しています。
 
-//emlist[バックエンドからフロントエンドへの送信（app.pyから抜粋）]{
+//emlist[バックエンドからフロントエンドへの送信（app.pyから抜粋）][python]{
 await cl.send_window_message({"type": "stage_updated", "stage": stage})
 //}
 
@@ -183,7 +183,7 @@ await cl.send_window_message({"type": "stage_updated", "stage": stage})
 次に、LLMを用いてステージ情報を生成する仕組みを説明します。
 ここで生成するのは、以下のようなゲームステージのJSONです。
 
-//emlist[ステージJSONの例]{
+//emlist[ステージJSONの例][json]{
 {
     "version": "1.0", 
     "stage_id": "33b91f42-dc7b-4449-abcb-6f8495d8c027", 
@@ -217,7 +217,7 @@ await cl.send_window_message({"type": "stage_updated", "stage": stage})
 「y = 590 - h/2」などの具体的な数式で座標を示すことで、ゲームとして成立するステージを安定して生成させることができます。
 このように、LLMには曖昧さを与えず、具体的な内容を伝えることが、安定した出力を得るための重要なポイントになることが分かりました。
 
-//emlist[システムプロンプト（抜粋）]{
+//emlist[システムプロンプト（抜粋）][python]{
 STAGE_GENERATION_SYSTEM = """
 あなたは物理パズルゲームのステージを生成する優秀なゲームデザイナーです。
 ユーザーの要件に従い、Matter.jsで動作する有効なステージJSONを生成してください。
@@ -277,7 +277,7 @@ STAGE_GENERATION_SYSTEM = """
 本実装でも、LLMはたまにゴールのないステージを生成したり、ボールを2つ配置したりと、自由奔放な創造性を発揮することがありました。
 そこで、ルールベースのバリデーションを導入し、生成されたステージがゲームとして成立しているかを検証する機構を実装しました。
 
-//emlist[バリデーション]{
+//emlist[バリデーション][python]{
 def validate_stage(stage: dict) -> bool:
     try:
         jsonschema.validate(stage, STAGE_SCHEMA)
@@ -329,7 +329,7 @@ Chainlitはプロジェクトルートに@<code>{public/}ディレクトリが�
 こちらについては、本書の別章（@<chapref>{ditto}、@<chapref>{higuchi}）でも解説されているため、詳しくはそちらを参照してください。
 本実装では、Chainlitの@<code>{custom_js}設定で@<code>{public/redirect.js}というスクリプトを注入し、ルートURL（@<code>{/}）にアクセスしたユーザーを自動的に@<code>{/public/index.html}へリダイレクトするようにしています。
 
-//emlist[ルートURLからゲーム画面へのリダイレクト（public/redirect.js）]{
+//emlist[ルートURLからゲーム画面へのリダイレクト（public/redirect.js）][javascript]{
 if (window === window.parent) {
     window.location.replace("/public/index.html");
 }
@@ -342,7 +342,7 @@ chainlit-app/
 ├── .chainlit/
 │   └── config.toml  # custom_js = "/public/redirect.js"
 └── public/
-    ├── redirect.js  # /public/index.html へ
+    ├── redirect.js  # /public/index.html へリダイレクト
     └── index.html  # ゲーム画面本体
 //}
 
@@ -359,7 +359,7 @@ CSS Gridで画面を左右に分割し、左側に@<code>{iframe}でChainlitの�
 //image[hojo-4][2カラムレイアウト：左にチャット、右にゲームキャンバス][scale=0.9]{
 //}
 
-//emlist[2カラムレイアウト（HTML・CSS抜粋）]{
+//emlist[2カラムレイアウト（HTML・CSS抜粋）][html/css]{
 <style>
   .app {
     min-height: 100vh;
@@ -390,7 +390,7 @@ Matter.jsは、CDNから1行で読み込むだけで、重力・衝突・摩擦�
 
 //footnote[matterjs][Matter.js：2D物理エンジンのJavaScriptライブラリ。https://brm.io/matter-js/]
 
-//emlist[CDNからの読み込み]{
+//emlist[CDNからの読み込み][html]{
 <script 
     src="https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js">
 </script>
@@ -398,7 +398,7 @@ Matter.jsは、CDNから1行で読み込むだけで、重力・衝突・摩擦�
 
 Matter.jsはグローバルに@<code>{Matter}オブジェクトを公開しており、そこからモジュールを分割代入で取り出して使います。
 
-//emlist[モジュールの取り出し]{
+//emlist[モジュールの取り出し][javascript]{
 const { Engine, Render, Runner, Bodies, Body,
         Composite, Query, Events } = Matter;
 //}
@@ -424,7 +424,7 @@ Events	Engine・Renderにイベントリスナーを登録
 Chainlitバックエンドから@<code>{send_window_message}で送られてくるデータは、フロントエンドのJavaScriptで@<code>{window.addEventListener("message")}を使って受け取ります。
 データは、チャットUIの外側にあるフロントエンドにリアルタイムで届くため、チャットとのやり取りとは独立して、ゲーム画面を更新することができます。
 
-//emlist[フロントエンド側の受信（public/index.html）]{
+//emlist[フロントエンド側の受信（public/index.html）][javascript]{
 window.addEventListener("message", e => {
   const d = e.data;
   if (!d || typeof d !== "object") return;
