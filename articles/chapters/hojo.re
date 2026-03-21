@@ -480,7 +480,7 @@ Chainlitでは、@<code>{send_window_message}で送ったデータを@<code>{{"t
 
 このように、チャットでステージの要件を伝えるだけで、LLMが生成したステージで遊ぶことができました。
 
-== おわりに
+== まとめ
 
 本章では、LLMによるゲームオブジェクトの生成とChainlitの@<code>{send_window_message}を組み合わせて物理パズルゲームを実装しました。
 
